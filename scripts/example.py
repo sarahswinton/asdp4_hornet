@@ -15,6 +15,9 @@ from sensor_msgs.msg import NavSatFix
 
 import numpy as np
 
+import coverage_planner
+
+#Taken from MAVROS source code for reference
 #FRAMES = {
 #    Waypoint.FRAME_GLOBAL: 'GAA',
 #    Waypoint.FRAME_GLOBAL_REL_ALT: 'GRA',
@@ -27,7 +30,7 @@ import numpy as np
 #    CommandCode.NAV_LAND: 'LAND',
 #    CommandCode.NAV_LOITER_TIME: 'LOITER-TIME',
 #    CommandCode.NAV_LOITER_TURNS: 'LOITER-TURNS',
-#    CommandCode.NAV_LOITER_UNLIM: 'Lmavros_msgs/WaypointReachedOITER-UNLIM',
+#    CommandCode.NAV_LOITER_UNLIM: 'LOITER-UNLIM',
 #    CommandCode.NAV_RETURN_TO_LAUNCH: 'RTL',
 #    CommandCode.NAV_TAKEOFF: 'TAKEOFF',
 #    CommandCode.NAV_WAYPOINT: 'WAYPOINT',
@@ -45,12 +48,6 @@ import numpy as np
 #    201: 'DO-SET-ROI',
 #}
 
-def WaypointsCallback(wps):
-    print("New waypoints!")
-    print("Length of wps: %s"%(len(wps.waypoints)))
-    for wp in wps.waypoints:
-        print(wp)
-
 def setArm(bol):
     rospy.wait_for_service('/mavros/cmd/arming')
     try:
@@ -62,11 +59,9 @@ def setArm(bol):
 def getCurPos():
     print("Getting global GPS position")
 
-    global_string = "/mavros/global_position/global"
-    #rospy.wait_for_service(global_string)
-    
+    global_string = "/mavros/global_position/global"    
     try:
-        curPos = rospy.wait_for_message(global_string, NavSatFix)
+        curPos = rospy.wait_for_message(global_string, NavSatFix) #/mavros/global_pos/global is a subscriber so use this to get one message. It broadcasts at around 50Hz otherwise
         print("Get cur pos: (%s, %s)"%(curPos.latitude, curPos.longitude))
         return curPos
     except rospy.ServiceException as exc:
@@ -103,10 +98,7 @@ def returnToLaunch():
     except rospy.ServiceException as exc:
         print("Service did not process request: " + str(exc))
 
-
-
-
-def setWayPoints():
+def setWayPoints(swirl=True):
 
     clearMission()
     pos = getCurPos()
@@ -119,14 +111,36 @@ def setWayPoints():
 
     x = lat
     y = lng
+    if swirl:            
+        for i in np.arange(0, 10*np.pi, 0.2):
+            # Cause circles are boring
+            x = lat + 0.00001*i*np.cos(i)
+            y = lng +0.00001*i*np.sin(i)
+            wps.append(Waypoint(command= CommandCode.NAV_WAYPOINT, frame=Waypoint.FRAME_GLOBAL_REL_ALT, x_lat=x, y_long=y,  z_alt=5, autocontinue=True))
+    else:
 
-    for i in np.arange(0, 10*np.pi, 0.2):
-        x = lat + 0.00001*i*np.cos(i)
-        y = lng +0.00001*i*np.sin(i)
-        wps.append(Waypoint(command= CommandCode.NAV_WAYPOINT, frame=Waypoint.FRAME_GLOBAL_REL_ALT, x_lat=x, y_long=y,  z_alt=5, autocontinue=True))
+        start_lat = lat
+        start_lng = lng
+
+        scale = 0.01
+        ox = [lat, lat+scale+scale/2, lat+scale, lat, lat]
+        oy = [lng, lng, lng+scale, lng+scale/2, lng]
+        reso = 0.0005
+
+        rx, ry = coverage_planner.planning(ox, oy, reso)
+
+        print("Number of nodes: {}".format(len(rx)))
+
+        for i in range(len(rx)):
+            x = rx[i]
+            y = ry[i]
+            wps.append(Waypoint(command= CommandCode.NAV_WAYPOINT, frame=Waypoint.FRAME_GLOBAL_REL_ALT, x_lat=x, y_long=y,  z_alt=5, autocontinue=True))
+
+
+
 
     wps.append(Waypoint(command= CommandCode.NAV_RETURN_TO_LAUNCH, frame=Waypoint.FRAME_MISSION, x_lat=0, y_long=0,  z_alt=0, autocontinue=True))
-
+ 
 
     print("Beginning WPs push")
     path = '/mavros/mission/push' 
@@ -142,8 +156,6 @@ def setWayPoints():
 if __name__ == "__main__":
 	print("Beginning example.py...")
 	rospy.init_node("mavros_test", anonymous=True)
-    #rospy.Subscriber("/mavros/mission/waypoints", WaypointList, WaypointsCallback)
         setArm(True)
-        setWayPoints()
-	#rospy.spin()
+        setWayPoints(swirl=False)
 
