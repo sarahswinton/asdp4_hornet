@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This script starts up the mavros_posix_sitl.launch file under ros (with a ros node obviously) on a ubuntu vm
+# as well as starting an instance of QGC.
+
 cd ~/PX4/Firmware
 QGroundControl
 source setup_px4_ros.sh
