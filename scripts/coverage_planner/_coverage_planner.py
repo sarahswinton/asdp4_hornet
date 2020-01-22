@@ -184,7 +184,7 @@ def setup_grid_map(ox, oy, reso, sweep_direction, offset_grid=10):
     height = math.ceil((max(oy) - min(oy)) / reso) + offset_grid
     center_x = np.mean(ox)
     center_y = np.mean(oy)
-
+    print("_coverage_planner.setup_grid_map: width {}, height {}, reso {}, center_x {}, center_y {}".format(width, height, reso, center_x, center_y))
     grid_map = GridMap(width, height, reso, center_x, center_y)
 
     grid_map.set_value_from_polygon(ox, oy, 1.0, inside=False)
@@ -236,7 +236,7 @@ def sweep_path_search(sweep_searcher, gmap, grid_search_animation=False):
             gmap.plot_grid_map(ax=ax)
             plt.pause(1.0)
 
-    gmap.plot_grid_map()
+    #gmap.plot_grid_map()
 
     return px, py
 
@@ -247,7 +247,7 @@ def planning(ox, oy, reso,
              ):
     sweep_vec, sweep_start_posi = find_sweep_direction_and_start_posi(ox, oy)
 
-    rox, roy = convert_grid_coordinate(ox, oy, sweep_vec, sweep_start_posi)
+    rox, roy = convert_grid_coordinate(ox, oy, sweep_vec, sweep_start_posi) 
 
     gmap, xinds_goaly, goaly = setup_grid_map(rox, roy, reso, sweeping_direction)
 
@@ -262,53 +262,53 @@ def planning(ox, oy, reso,
     return rx, ry
 
 
-def planning_animation(ox, oy, reso):  # pragma: no cover
-    px, py = planning(ox, oy, reso)
+# def planning_animation(ox, oy, reso):  # pragma: no cover
+#     px, py = planning(ox, oy, reso)
 
-    # animation
-    if do_animation:
-        for ipx, ipy in zip(px, py):
-            plt.cla()
-            # for stopping simulation with the esc key.
-            plt.gcf().canvas.mpl_connect('key_release_event',
-                    lambda event: [exit(0) if event.key == 'escape' else None])
-            plt.plot(ox, oy, "-xb")
-            plt.plot(px, py, "-r")
-            plt.plot(ipx, ipy, "or")
-            plt.axis("equal")
-            plt.grid(True)
-            plt.pause(0.1)
+#     # animation
+#     if do_animation:
+#         for ipx, ipy in zip(px, py):
+#             plt.cla()
+#             # for stopping simulation with the esc key.
+#             plt.gcf().canvas.mpl_connect('key_release_event',
+#                     lambda event: [exit(0) if event.key == 'escape' else None])
+#             plt.plot(ox, oy, "-xb")
+#             plt.plot(px, py, "-r")
+#             plt.plot(ipx, ipy, "or")
+#             plt.axis("equal")
+#             plt.grid(True)
+#             plt.pause(0.1)
 
-    plt.cla()
-    plt.plot(ox, oy, "-xb")
-    plt.plot(px, py, "-r")
-    plt.axis("equal")
-    plt.grid(True)
-    plt.pause(0.1)
-
-
-def main():  # pragma: no cover
-    print("start!!")
-
-    ox = [0.0, 20.0, 50.0, 100.0, 130.0, 40.0, 0.0]
-    oy = [0.0, -20.0, 0.0, 30.0, 60.0, 80.0, 0.0]
-    reso = 5.0
-    planning_animation(ox, oy, reso)
-
-    ox = [0.0, 50.0, 50.0, 0.0, 0.0]
-    oy = [0.0, 0.0, 30.0, 30.0, 0.0]
-    reso = 1.3
-    planning_animation(ox, oy, reso)
-
-    ox = [0.0, 20.0, 50.0, 200.0, 130.0, 40.0, 0.0]
-    oy = [0.0, -80.0, 0.0, 30.0, 60.0, 80.0, 0.0]
-    reso = 5.0
-    planning_animation(ox, oy, reso)
-
-    plt.show()
-
-    print("done!!")
+#     plt.cla()z
+#     plt.plot(ox, oy, "-xb")
+#     plt.plot(px, py, "-r")
+#     plt.axis("equal")
+#     plt.grid(True)
+#     plt.pause(0.1)
 
 
-if __name__ == '__main__':
-    main()
+# def main():  # pragma: no cover
+#     print("start!!")
+
+#     ox = [0.0, 20.0, 50.0, 100.0, 130.0, 40.0, 0.0]
+#     oy = [0.0, -20.0, 0.0, 30.0, 60.0, 80.0, 0.0]
+#     reso = 5.0
+#     planning_animation(ox, oy, reso)
+
+#     ox = [0.0, 50.0, 50.0, 0.0, 0.0]
+#     oy = [0.0, 0.0, 30.0, 30.0, 0.0]
+#     reso = 1.3
+#     planning_animation(ox, oy, reso)
+
+#     ox = [0.0, 20.0, 50.0, 200.0, 130.0, 40.0, 0.0]
+#     oy = [0.0, -80.0, 0.0, 30.0, 60.0, 80.0, 0.0]
+#     reso = 5.0
+#     planning_animation(ox, oy, reso)
+
+#     plt.show()
+
+#     print("done!!")
+
+
+# if __name__ == '__main__':
+#     main()

@@ -26,8 +26,8 @@ class GridMap:
         :param center_y: center y position [m]
         :param init_val: initial value for all grid
         """
-        self.width = width
-        self.height = height
+        self.width = int(width)
+        self.height = int(height)
         self.resolution = resolution
         self.center_x = center_x
         self.center_y = center_y
@@ -38,6 +38,7 @@ class GridMap:
                             (self.height / 2.0) * self.resolution
 
         self.ndata = self.width * self.height
+        print("_grid_map_lib.GridMap.__init__: init_val {}, ndata {}".format(init_val, self.ndata))
         self.data = [init_val] * self.ndata
 
     def get_value_from_xy_index(self, x_ind, y_ind):
