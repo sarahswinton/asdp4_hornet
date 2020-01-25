@@ -117,6 +117,7 @@ def setWayPoints(swirl=True):
             x = lat + 0.00001*i*np.cos(i)
             y = lng +0.00001*i*np.sin(i)
             wps.append(Waypoint(command= CommandCode.NAV_WAYPOINT, frame=Waypoint.FRAME_GLOBAL_REL_ALT, x_lat=x, y_long=y,  z_alt=5, autocontinue=True))
+
     else:
 
         start_lat = lat
@@ -157,5 +158,6 @@ if __name__ == "__main__":
 	print("Beginning example.py...")
 	rospy.init_node("mavros_test", anonymous=True)
         setArm(True)
-        setWayPoints(swirl=False)
+        setWayPoints(swirl=True)
+        #return 0
 
