@@ -1,3 +1,11 @@
+"""
+This commander shell will be a implementation of the PX4 'commander' CLI (https://docs.px4.io/v1.9.0/en/flight_modes/).
+
+Here you can switch modes on the go. Will require root access for safety reasons.
+"""
+
+
+
 from cmd import Cmd
 import logger
 
@@ -25,36 +33,49 @@ def parse(arg):
 class CommanderCmd(Cmd):
     intro = banner+ "\nType ? to see a list of available commands"
     prompt = "Commander > "
-
-    ### Add waypoint ... ###
-    def do_add(self,inp):
+    
+    #Takeoff    Auto    [Position fix required (e.g. GPS)]      Vehicle initiates the takeoff sequence using either catapult/hand-launch mode or runway takeoff mode (in the current direction).
+    def do_takeoff(self, inp):
         pass
-    def help_add(self):
-        print("Add a waypoint")
-
-    ### Import waypoints from file ###
-    def do_import(self,inp):
-        try:
-            import_file = parse(inp)
-            with open(import_file[0], 'r') as file_:
-                pass    
-        except IndexError as e:
-            log.error("No file path given")
-        except FileNotFoundError as e:
-            log.error("This file path doesn't exist '{}'".format(import_file[0]))
-    def help_import(self):
-        print("Import a CSV waypoint file\n\tUsage: import FILEPATH")
-
-    ### Upload to PX4 ###
-    def do_upload(self,inp):
-        pass
-    def help_upload(self):
+    def help_takeoff(self):
         pass
 
-    ### WP Shell functionality ##
+    #Land       Auto    [Position fix required (e.g. GPS)]      Vehicle initiates the fixed-wing landing sequence.
+    def do_land(self,inp):
+        pass
+    def help_land(self):
+        pass
+
+    #Hold       Auto    [Position fix required (e.g. GPS)]      Vehicle circles around the GPS hold position at the current altitude.
+    def do_hold(self,inp):
+        pass
+    def help_hold(self):
+        pass
+
+    #Return     Auto    [Position fix required (e.g. GPS)]      Vehicle ascends to a safe height and then returns to its home position and circles.
+    def do_return(self, inp):
+        pass
+    def help_return(self):
+        pass
+
+    #Mission    Auto    [Position fix required (e.g. GPS)]      Vehicle executes a predefined mission/flight plan that has been uploaded to the flight controller.  
+    def do_mission(self, inp):
+        pass
+    def help_mission(self):
+        pass
+
+
+    ### Commander Shell functionality ##
     def do_exit(self,inp):
         print()
-        if input("Do you want to exit the waypoint creator? Y/[N] ").lower() == "y":
-            log.info("Exiting the WP creator")
+        if input("Do you want to exit commander? Y/[N] ").lower() == "y":
+            log.info("Exiting the commander")
             return True
+    def help_exit(self):
+        pass
+
+    help_EOF = help_exit
     do_EOF = do_exit
+
+    def emptyline(self):
+        pass
