@@ -8,7 +8,7 @@ from datetime import datetime
 FORMATTER_FILE = logging.Formatter(
     "%(asctime)s — %(name)s — %(levelname)s — %(message)s")
 FORMATTER_CONSOLE = FORMATTER_FILE
-LOG_FILE = "/home/jhewers/Code/asdp4_hornet/HCmd.log"
+LOG_FILE = os.path.join(os.getcwd(),"HCmd.log")
 
 
 def get_console_handler():
