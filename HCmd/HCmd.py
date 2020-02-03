@@ -1,16 +1,37 @@
 from cmd import Cmd
 import logger
 
-import Waypoints
+import waypoints
+import commander
 
 log = logger.get_logger(__name__)
 
-class GCmd(Cmd):
-    intro = "Welcome to the Hornet Shell!\nUse ? or 'help' to see a list of available commands"
+banner = """
+
+
+  _    _  ____  _____  _   _ ______ _______ 
+ | |  | |/ __ \|  __ \| \ | |  ____|__   __|
+ | |__| | |  | | |__) |  \| | |__     | |   
+ |  __  | |  | |  _  /| . ` |  __|    | |   
+ | |  | | |__| | | \ \| |\  | |____   | |   
+ |_|  |_|\____/|_|  \_\_| \_|______|  |_|   
+                                            
+                                            
+
+"""
+
+
+class HCmd(Cmd):
+  
+#    intro = "Welcome to the Hornet Shell!\nUse ? or 'help' to see a list of available commands"
     
     def __init__(self):
         self.root = False
         self.prompt = "$ "
+
+        self.intro = banner
+        self.intro += "\nUse ? or 'help' to see a list of available commands"
+
         Cmd.__init__(self)
     
     ## Root ###
@@ -25,10 +46,17 @@ class GCmd(Cmd):
         self.prompt = "$ "
     def help_root(self):
         print("Gives escelated priviliges to the user")
+   
+    
+    ### Commander ###
+    def do_commander(self, inp):
+        # Do translate
+        shell = commander.CommanderCmd()
+        shell.cmdloop()
 
     ### Waypoints ###
     def do_waypoints(self, inp):
-        shell = Waypoints.WaypointsCmd()
+        shell = waypoints.WaypointsCmd()
         shell.cmdloop()
     def help_waypoints(self):
         print("A manual waypoint creator WIP")
@@ -48,10 +76,10 @@ class GCmd(Cmd):
         if self.root:
             self.exit_root()
         else:
-            print("Exiting GCmd...")
+            print("Exiting HCmd...")
             return True
     def help_exit(self):
-        print("Exit GCmd or root")
+        print("Exit HCmd or root")
 
     ### Other Cmd setup to control shell behaviour ###
     def emptyline(self):
@@ -60,7 +88,7 @@ class GCmd(Cmd):
     help_EOF = help_exit
 
 def run():
-    GCmd().cmdloop()
+    HCmd().cmdloop()
 
 if __name__ == "__main__":
     run()
