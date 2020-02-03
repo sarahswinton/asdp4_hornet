@@ -3,13 +3,26 @@ import logger
 
 log = logger.get_logger(__name__)
 
+banner = """
+
+
+ __          __ __     _______   ____ _____ _   _ _______ _____ 
+ \ \        / /\\ \   / /  __ \ / __ \_   _| \ | |__   __/ ____|
+  \ \  /\  / /  \\ \_/ /| |__) | |  | || | |  \| |  | | | (___  
+   \ \/  \/ / /\ \\   / |  ___/| |  | || | | . ` |  | |  \___ \ 
+    \  /\  / ____ \| |  | |    | |__| || |_| |\  |  | |  ____) |
+     \/  \/_/    \_\_|  |_|     \____/_____|_| \_|  |_| |_____/ 
+                                                                
+                                                                
+"""
+
 def parse(arg):
     'Convert a series of zero or more numbers to an argument tuple'
     return tuple(arg.split())
 
 
 class WaypointsCmd(Cmd):
-    info = "HCmd waypoint creator! Type ? to see a list of available commands"
+    intro = banner +"\nType ? to see a list of available commands"
     prompt = "WP Editor > "
 
     ### Add waypoint ... ###
