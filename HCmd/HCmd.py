@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from cmd import Cmd
 import logger
 
@@ -5,6 +7,8 @@ import waypoints
 import commander
 from info import controller_info, drone_info
 
+import rospy
+rospy.init_node(__name__, anonymous=True)
 
 log = logger.get_logger(__name__)
 
@@ -73,6 +77,7 @@ class HCmd(Cmd):
         else:
             print("No correct argument given")
             self.help_info()
+
     def help_info(self):
         print("Prints either the controller or drones current inforation")
         print("\tARGUMENTS:\tcontroller\tdrone")
@@ -102,3 +107,4 @@ def run():
 
 if __name__ == "__main__":
     run()
+    rospy.signal_shutdown("Exiting HCmd")

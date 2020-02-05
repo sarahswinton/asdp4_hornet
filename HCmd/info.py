@@ -28,8 +28,8 @@ def _format_axes(ind,width=20):
 
 def controller_info():
         global axes, buttons
-	rospy.init_node("controller_info",anonymous=True)
-	rospy.Subscriber("joy", Joy, _joy_cb)	
+#        rospy.init_node("controller_info", anonymous=True)
+	joy_sub = rospy.Subscriber("joy", Joy, _joy_cb)	
 
 	term = blessed.Terminal()
 	with term.fullscreen(), term.cbreak():
@@ -37,13 +37,15 @@ def controller_info():
             
             while inp != "q":
 	        print(term.clear())
-                with term.location(0,term.width-1):
+                with term.location(0,term.height-1):
                     print("press 'q' to exit")
                 print("YAW   "+_format_axes(0,term.width/2))
                 print("PITCH "+_format_axes(1,term.width/2))
                 print("ROLL  "+_format_axes(3,term.width/2))
                	inp = term.inkey(0.1)
-
+#        rospy.signal_shutdown("Exiting controller info screen")
+        joy_sub.unregister()
+        
 global battery, local_pose, imu_data
 
 def _battery_cb(msg):
@@ -65,10 +67,10 @@ def drone_info():
     local_pose = ""
     imu_data = ""
     
-    rospy.init_node("drone_info", anonymous=True)
-    rospy.Subscriber("/mavros/battery", BatteryState, _battery_cb)
-    rospy.Subscriber("/mavros/local_position/pose", PoseStamped, _local_pose_cb)
-    rospy.Subscriber("/mavros/imu/data", Imu, _imu_data_cb)
+#    rospy.init_node("drone_info", anonymous=True)
+    battery_sub = rospy.Subscriber("/mavros/battery", BatteryState, _battery_cb)
+    local_pose_sub = rospy.Subscriber("/mavros/local_position/pose", PoseStamped, _local_pose_cb)
+    imu_data_sub = rospy.Subscriber("/mavros/imu/data", Imu, _imu_data_cb)
 
     term = blessed.Terminal()
     with term.fullscreen(), term.cbreak():
@@ -76,10 +78,23 @@ def drone_info():
         
         while inp != "q":
             print(term.clear()) 
-            print("BATTERY " + str(battery))
-            print("LOCAL POSE " + str(local_pose))
-            print("IMU DATA " + str(imu_data))
+            print("BATTERY\n" + str(battery))
+            with term.location(0, term.height/2):
+                print("LOCAL POSE")
+                print(str(local_pose))
+            for i in range(len(str(imu_data).split("\n"))):
+                with term.location(term.width/2,i):
+                    if i == 0:
+                        print("IMU DATA")
+                    else:
+                        print(str(imu_data).split("\n")[i])
+            with term.location(0, term.height-1):
+                print("press 'q' to exit")
+    
             inp = term.inkey(0.1)
+    battery_sub.unregister()
+    local_pose_sub.unregister()
+    imu_data_sub.unregister()
 
 if __name__ == "__main__":
     drone_info()
