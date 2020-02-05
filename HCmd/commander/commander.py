@@ -1,6 +1,9 @@
 from cmd import Cmd
 import logger
 
+import rospy
+from mavros_msgs.srv import CommandBool
+
 banner = """
 
 
@@ -50,6 +53,22 @@ class CommanderCmd(Cmd):
         pass
     def help_upload(self):
         pass
+
+    def do_arm(self,inp):
+        rospy.wait_for_service("/mavros/cmd/arming")
+        try:
+            arming = rospy.ServiceProxy("mavros/cmd/arming", CommandBool)
+            if inp.lower() == "true": 
+                resp = arming(True)
+                resp = "Success: " + str(resp.success)
+            elif inp.lower() == "false":
+                resp = arming(False)
+                resp = "Success: " + str(resp.success)
+            else:
+                resp = "No value argument (true/false) given"
+            print(resp)
+        except rospt.ServiceException, e:
+            print("Service arm call failed: %s"%e)
 
     ### WP Shell functionality ##
     def do_exit(self,inp):
