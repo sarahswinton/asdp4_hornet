@@ -52,7 +52,7 @@ def _battery_cb(msg):
 
 def _local_pose_cb(msg):
     global local_pose
-1    local_pose = msg
+    local_pose = msg
 
 def _imu_data_cb(msg):
     global imu_data
