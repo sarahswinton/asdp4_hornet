@@ -3,6 +3,8 @@ import logger
 
 import waypoints
 import commander
+from info import controller_info, drone_info
+
 
 log = logger.get_logger(__name__)
 
@@ -63,9 +65,17 @@ class HCmd(Cmd):
 
     ### Info ###
     def do_info(self, inp):
-        print("TODO: Print current drone info")
+        # Could have htop like terminal GUI
+        if inp == "controller":
+            controller_info()
+        elif inp == "drone":
+            drone_info()
+        else:
+            print("No correct argument given")
+            self.help_info()
     def help_info(self):
-        print("Prints current drones information")
+        print("Prints either the controller or drones current inforation")
+        print("\tARGUMENTS:\tcontroller\tdrone")
 
     ### Setup ###
     def do_setup(self, inp):
