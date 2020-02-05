@@ -2,13 +2,17 @@
 
 from cmd import Cmd
 import logger
+import os
+
+# Clear terminal
+os.system('clear && printf "\e[3J"')
 
 import waypoints
 import commander
 from info import controller_info, drone_info
 
 import rospy
-rospy.init_node(__name__, anonymous=True)
+rospy.init_node("hornet_cmd", anonymous=True)
 
 log = logger.get_logger(__name__)
 
@@ -34,6 +38,7 @@ class HCmd(Cmd):
     def __init__(self):
         self.root = False
         self.prompt = "$ "
+        
 
         self.intro = banner
         self.intro += "\nUse ? or 'help' to see a list of available commands"
