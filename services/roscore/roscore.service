@@ -1,0 +1,11 @@
+[Unit]
+Description=roscore autostart
+
+[Service]
+Type=simple
+ExecStart=/home/hornet/catkin_ws/src/asdp4_hornet/services/roscore/roscore.sh
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target
