@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-18-04
+
 if [ "$1" = "local" ]; then
 	if [ -z "$(which vncviewer)" ]; then
 		echo "vncviewer is not installed\nPlease run apt-get install tigervnc"

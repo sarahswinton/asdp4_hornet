@@ -1,8 +1,18 @@
+#!/usr/bin/env python
+
 from cmd import Cmd
 import logger
+import os
+
+# Clear terminal
+os.system('clear && printf "\e[3J"')
 
 import waypoints
 import commander
+from info import controller_info, drone_info
+
+import rospy
+rospy.init_node("hornet_cmd", anonymous=True)
 
 log = logger.get_logger(__name__)
 
@@ -28,6 +38,7 @@ class HCmd(Cmd):
     def __init__(self):
         self.root = False
         self.prompt = "$ "
+        
 
         self.intro = banner
         self.intro += "\nUse ? or 'help' to see a list of available commands"
@@ -63,9 +74,18 @@ class HCmd(Cmd):
 
     ### Info ###
     def do_info(self, inp):
-        print("TODO: Print current drone info")
+        # Could have htop like terminal GUI
+        if inp == "controller":
+            controller_info()
+        elif inp == "drone":
+            drone_info()
+        else:
+            print("No correct argument given")
+            self.help_info()
+
     def help_info(self):
-        print("Prints current drones information")
+        print("Prints either the controller or drones current inforation")
+        print("\tARGUMENTS:\tcontroller\tdrone")
 
     ### Setup ###
     def do_setup(self, inp):
@@ -92,3 +112,4 @@ def run():
 
 if __name__ == "__main__":
     run()
+    rospy.signal_shutdown("Exiting HCmd")

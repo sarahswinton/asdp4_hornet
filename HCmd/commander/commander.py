@@ -9,6 +9,9 @@ Here you can switch modes on the go. Will require root access for safety reasons
 from cmd import Cmd
 import logger
 
+import rospy
+from mavros_msgs.srv import CommandBool
+
 banner = """
 
 
@@ -66,6 +69,23 @@ class CommanderCmd(Cmd):
 
 
     ### Commander Shell functionality ##
+    def do_arm(self,inp):
+        rospy.wait_for_service("/mavros/cmd/arming")
+        try:
+            arming = rospy.ServiceProxy("mavros/cmd/arming", CommandBool)
+            if inp.lower() == "true": 
+                resp = arming(True)
+                resp = "Success: " + str(resp.success)
+            elif inp.lower() == "false":
+                resp = arming(False)
+                resp = "Success: " + str(resp.success)
+            else:
+                resp = "No value argument (true/false) given"
+            print(resp)
+        except rospt.ServiceException, e:
+            print("Service arm call failed: %s"%e)
+
+    ### WP Shell functionality ##
     def do_exit(self,inp):
         print()
         if input("Do you want to exit commander? Y/[N] ").lower() == "y":
