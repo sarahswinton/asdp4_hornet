@@ -9,7 +9,7 @@ os.system('clear && printf "\e[3J"')
 
 import waypoints
 import commander
-from info import controller_info, drone_info
+from info import controller_info, drone_info, services_info
 
 import rospy
 rospy.init_node("hornet_cmd", anonymous=True)
@@ -79,13 +79,15 @@ class HCmd(Cmd):
             controller_info()
         elif inp == "drone":
             drone_info()
+        elif inp == "services":
+            services_info()
         else:
             print("No correct argument given")
             self.help_info()
 
     def help_info(self):
         print("Prints either the controller or drones current inforation")
-        print("\tARGUMENTS:\tcontroller\tdrone")
+        print("\tARGUMENTS:\tcontroller\tdrone\tservices")
 
     ### Setup ###
     def do_setup(self, inp):

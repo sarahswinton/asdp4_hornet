@@ -3,6 +3,7 @@ import curses
 import time
 import numpy as np
 import rospy
+import subprocess
 
 from sensor_msgs.msg import Joy, BatteryState, Imu
 from geometry_msgs.msg import PoseStamped
@@ -95,6 +96,35 @@ def drone_info():
     battery_sub.unregister()
     local_pose_sub.unregister()
     imu_data_sub.unregister()
+
+
+def services_info():
+    term = blessed.Terminal()
+    with term.fullscreen(), term.cbreak():
+        inp = None
+        
+        while inp != "q":
+            roscore = subprocess.Popen(['bash -c "systemctl status roscore"'], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            roscore_output = roscore.stdout.read()
+
+            mavros = subprocess.Popen(['bash -c "systemctl status mavros"'], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            mavros_output = mavros.stdout.read()
+
+            date = subprocess.Popen(['date'], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            date_output = date.stdout.read()
+
+            print(term.clear()) 
+            print(date_output)
+            print("MAVROS\n" + str(mavros_output))
+            with term.location(0, term.height/2+1):
+                print("ROSCORE")
+                print(str(roscore_output))
+            with term.location(0, term.height-1):
+                print("press 'q' to exit")
+    
+            inp = term.inkey(0.1)
+
+
 
 if __name__ == "__main__":
     drone_info()
